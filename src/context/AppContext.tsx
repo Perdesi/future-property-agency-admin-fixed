@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { Settings, Theme } from '../types';
 import * as store from '../services/storageService';
+import LoadingState from '../components/LoadingState';
 
 interface Toast { id: number; message: string; tone: 'success' | 'error' }
 interface Ctx {
@@ -18,6 +19,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [favorites, setFavorites] = useState(store.getFavorites);
   const [theme, setTheme] = useState<Theme>(store.getTheme);
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [ready, setReady] = useState(!store.REMOTE);
 
   useEffect(() => { document.documentElement.dataset.theme = theme; store.saveTheme(theme); }, [theme]);
   const dismiss = useCallback((id: number) => setToasts(t => t.filter(x => x.id !== id)), []);
@@ -27,6 +29,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setTimeout(() => dismiss(id), 4000);
   }, [dismiss]);
 
+  useEffect(() => { store.setRemoteErrorHandler(m => notify(m, 'error')); }, [notify]);
+  useEffect(() => {
+    if (!store.REMOTE) return;
+    let alive = true;
+    store.syncFromRemote().then(() => { if (alive) { setSettings(store.getSettings()); setReady(true); } });
+    return () => { alive = false; };
+  }, []);
+
   const value = useMemo<Ctx>(() => ({
     settings, favorites, theme, toasts, notify, dismiss,
     saveSettings: p => setSettings(store.updateSettings(p)),
@@ -34,7 +44,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     toggleTheme: () => setTheme(t => t === 'light' ? 'dark' : 'light'),
     refreshAll: () => { setSettings(store.getSettings()); setFavorites(store.getFavorites()); setTheme(store.getTheme()); },
   }), [settings, favorites, theme, toasts, notify, dismiss]);
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  return <AppContext.Provider value={value}>{ready ? children : <LoadingState label="Loading…" />}</AppContext.Provider>;
 }
 export function useApp(): Ctx {
   const c = useContext(AppContext);

@@ -8,7 +8,7 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const { notify } = useApp();
   const [open, setOpen] = useState(false);
-  const logout = () => { const a = store.getAdmin(); store.saveAdmin({ ...a, loggedIn:false }); notify('You have been logged out.'); navigate('/admin/login'); };
+  const logout = () => { store.logout(); notify('You have been logged out.'); navigate('/admin/login'); };
   const links = [
     ['/admin','Dashboard',LayoutDashboard], ['/admin/properties','Properties',Building2], ['/admin/inquiries','Inquiries',ClipboardList],
     ['/admin/settings','Website Settings',Settings], ['/admin/profile','Admin Profile',User], ['/admin/backup','Backup & Restore',DatabaseBackup],
