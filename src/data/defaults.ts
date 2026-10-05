@@ -6,7 +6,7 @@ export const defaultSettings: Settings = {
   tagline: 'جائیداد کی خرید و فروخت کا بااعتماد ادارہ',
   ceo: 'C.E.O Sheikh Umer Ayub',
   address: 'FF 09,20, Bajour Tower, Gunjmandi, Rawalpindi',
-  phone: '051-5539200', mobile: '0336-5559200', whatsapp: '0336-5559200',
+  phone: '0336-5559200', mobile: '0336-5559200', whatsapp: '0336-5559200',
   email: 'FuturePropertyAgency@outlook.com', officeHours: 'Mon–Sat, 10:00 AM – 7:00 PM',
   facebook: '', instagram: '', youtube: '', tiktok: '',
   mapUrl: 'https://www.google.com/maps/search/?api=1&query=Bajour+Tower+Gunjmandi+Rawalpindi',
