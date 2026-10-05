@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Home, Key, Building, Store, TrendingUp, Megaphone, Search, Handshake, MapPin, Phone } from 'lucide-react';
+import { Home, Key, Building, Store, TrendingUp, Megaphone, Search, Handshake, MapPin, Phone, Mail } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useSeo } from '../hooks/useSeo';
 import WhatsAppButton from '../components/WhatsAppButton';
@@ -34,9 +34,24 @@ export function Contact() {
   const { settings: s } = useApp();
   useSeo('Contact', `Contact ${s.agencyName}`);
   return <div className="container section"><h1>Contact us</h1><div className="detail"><div className="card pad"><h3>{s.agencyName}</h3>
-    <p><MapPin size={14} /> {s.address}</p><p><Phone size={14} /> {s.phone}<br />{s.mobile} (WhatsApp)</p><p>{s.ceo}</p><p className="muted">{s.officeHours}</p>
+    <p><MapPin size={14} /> {s.address}</p><p><Phone size={14} /> {s.phone}<br />{s.mobile} (WhatsApp)</p>{s.email && <p><Mail size={14} /> <a href={`mailto:${s.email}`}>{s.email}</a></p>}<p>{s.ceo}</p><p className="muted">{s.officeHours}</p>
     <div className="row"><CallButton className="btn primary" label="Call now" /><WhatsAppButton /><a className="btn ghost" target="_blank" rel="noopener noreferrer" href={s.mapUrl}>Get directions</a></div></div>
     <InquiryForm withSubject /></div></div>;
+}
+export function Privacy() {
+  const { settings: s } = useApp();
+  useSeo('Privacy Policy', `Privacy policy of ${s.agencyName}`);
+  return <div className="container section"><h1>Privacy Policy</h1><div className="card pad">
+    <p className="muted">Last updated: October 2026</p>
+    <h3>Information we collect</h3>
+    <p>When you send an inquiry through our contact or property forms, we collect the details you type in (name, phone number, email address and message). We use them only to reply to you about properties and our services. We do not sell your personal information.</p>
+    <h3>Cookies and advertising</h3>
+    <p>This website may display ads served by Google AdSense. Google and its partners use cookies to show ads based on your previous visits to this and other websites. You can opt out of personalised advertising at <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">Google Ads Settings</a> or <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer">aboutads.info</a>. Your saved favourites and theme choice are kept in your own browser.</p>
+    <h3>Third-party links</h3>
+    <p>Our pages may link to WhatsApp, maps or social media. Those services have their own privacy policies and we are not responsible for them.</p>
+    <h3>Contact us</h3>
+    <p>For any privacy question, contact {s.agencyName}{s.email ? ` at ${s.email}` : ''}{s.mobile ? ` or ${s.mobile}` : ''}.</p>
+  </div></div>;
 }
 export function NotFound() {
   useSeo('Page not found');

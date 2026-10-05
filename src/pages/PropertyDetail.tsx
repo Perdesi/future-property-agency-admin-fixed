@@ -11,12 +11,18 @@ import WhatsAppButton from '../components/WhatsAppButton';
 import CallButton from '../components/CallButton';
 import PropertyGrid from '../components/PropertyGrid';
 import EmptyState from '../components/EmptyState';
-import { useSeo } from '../hooks/useSeo';
+import { useJsonLd, useSeo } from '../hooks/useSeo';
 export default function PropertyDetail() {
   const { id = '' } = useParams();
   const { settings: s, notify } = useApp();
   const p = useMemo(() => getProperty(id), [id]);
   useSeo(p?.title ?? 'Property not found', p?.shortDescription);
+  useJsonLd('property', p ? {
+    '@context': 'https://schema.org', '@type': 'RealEstateListing', name: p.title, url: `https://futurepropertyagency.com/property/${p.id}`,
+    description: p.shortDescription || p.description, datePosted: p.createdAt, image: p.images.slice(0, 5),
+    address: { '@type': 'PostalAddress', streetAddress: p.address, addressLocality: p.city, addressCountry: 'PK' },
+    offers: { '@type': 'Offer', price: p.price, priceCurrency: 'PKR', availability: p.status === 'Available' ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut' },
+  } : null);
   useEffect(() => { if (p) trackPropertyView(p.id); }, [p?.id]); // eslint-disable-line
   if (!p) return <div className="container"><EmptyState title="Property not found" text="This listing may have been removed." action={<Link className="btn primary" to="/properties">Browse properties</Link>} /></div>;
   const similar = getProperties().filter(x => x.id !== p.id && (x.propertyType === p.propertyType || x.area === p.area)).slice(0, 3);

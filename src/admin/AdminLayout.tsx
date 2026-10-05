@@ -3,9 +3,11 @@ import { Building2, ClipboardList, DatabaseBackup, LayoutDashboard, LogOut, Menu
 import { useState } from 'react';
 import * as store from '../services/storageService';
 import { useApp } from '../context/AppContext';
+import { useNoIndex } from '../hooks/useSeo';
 
 export default function AdminLayout() {
   const navigate = useNavigate();
+  useNoIndex();
   const { notify } = useApp();
   const [open, setOpen] = useState(false);
   const logout = () => { store.logout(); notify('You have been logged out.'); navigate('/admin/login'); };

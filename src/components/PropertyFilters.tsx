@@ -1,8 +1,9 @@
 import type { Filters } from '../utils/filter';
 import { CATEGORIES, PROPERTY_TYPES, STATUSES } from '../data/options';
+import type { ReactNode } from 'react';
+const F = ({ label, children }: { label: string; children: ReactNode }) => <label className="field"><span>{label}</span>{children}</label>;
 interface Props { value: Filters; onChange: (k: string, v: string) => void; onReset: () => void }
 export default function PropertyFilters({ value: v, onChange, onReset }: Props) {
-  const F = ({ label, children }: { label: string; children: import('react').ReactNode }) => <label className="field"><span>{label}</span>{children}</label>;
   const sel = (k: string, opts: string[], any = 'Any') => (
     <select value={v[k] ?? ''} onChange={e => onChange(k, e.target.value)}><option value="">{any}</option>{opts.map(o => <option key={o}>{o}</option>)}</select>);
   const num = (k: string, ph: string) => <input type="number" min="0" inputMode="numeric" placeholder={ph} value={v[k] ?? ''} onChange={e => onChange(k, e.target.value)} />;

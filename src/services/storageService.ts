@@ -115,7 +115,7 @@ export const addFavorite = (id: string): string[] => { const f = [...new Set([..
 export const removeFavorite = (id: string): string[] => { const f = getFavorites().filter(x => x !== id); write(KEYS.favorites, f); return f; };
 
 // Settings
-export const getSettings = (): Settings => { const s = { ...defaultSettings, ...read<Partial<Settings>>(KEYS.settings, {}, isObj) }; if (!s.logo) s.logo = defaultSettings.logo; return s; };
+export const getSettings = (): Settings => { const s = { ...defaultSettings, ...read<Partial<Settings>>(KEYS.settings, {}, isObj) }; if (!s.logo) s.logo = defaultSettings.logo; if (!s.email) s.email = defaultSettings.email; return s; };
 export function updateSettings(patch: Partial<Settings>): Settings {
   const s = { ...getSettings(), ...patch }; write(KEYS.settings, s);
   if (REMOTE) bg('Could not save settings online', remote.upsertRow('settings', { id: 'main', data: s }));

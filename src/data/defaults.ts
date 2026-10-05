@@ -7,7 +7,7 @@ export const defaultSettings: Settings = {
   ceo: 'C.E.O Sheikh Umer Ayub',
   address: 'FF 09,20, Bajour Tower, Gunjmandi, Rawalpindi',
   phone: '051-5539200', mobile: '0336-5559200', whatsapp: '0336-5559200',
-  email: '', officeHours: 'Mon–Sat, 10:00 AM – 7:00 PM',
+  email: 'FuturePropertyAgency@outlook.com', officeHours: 'Mon–Sat, 10:00 AM – 7:00 PM',
   facebook: '', instagram: '', youtube: '', tiktok: '',
   mapUrl: 'https://www.google.com/maps/search/?api=1&query=Bajour+Tower+Gunjmandi+Rawalpindi',
   latitude: 33.6007, longitude: 73.0679,
