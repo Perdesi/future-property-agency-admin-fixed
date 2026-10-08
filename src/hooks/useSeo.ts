@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 const SITE = 'https://futurepropertyagency.com';
-export function useSeo(title?: string, description?: string): void {
+export function useSeo(title?: string, description?: string, image?: string): void {
   const { settings } = useApp();
   useEffect(() => {
     document.title = title ? `${title} | ${settings.agencyName}` : settings.seoTitle;
@@ -14,10 +14,13 @@ export function useSeo(title?: string, description?: string): void {
     const url = `${SITE}${window.location.pathname === '/' ? '' : window.location.pathname}`;
     set('name', 'description', desc); set('property', 'og:title', document.title);
     set('property', 'og:description', desc); set('property', 'og:type', 'website'); set('property', 'og:url', url);
+    const img = image && image.startsWith('http') ? image : `${SITE}/logo.png`;
+    set('property', 'og:image', img); set('name', 'twitter:image', img);
+    set('name', 'twitter:card', image ? 'summary_large_image' : 'summary');
     let link = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
     if (!link) { link = document.createElement('link'); link.rel = 'canonical'; document.head.appendChild(link); }
     link.href = url;
-  }, [title, description, settings]);
+  }, [title, description, image, settings]);
 }
 /** Adds a JSON-LD structured-data block to the page while the component is mounted. */
 export function useJsonLd(id: string, data: object | null): void {

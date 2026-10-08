@@ -16,6 +16,7 @@ export interface Property {
   features: Feature[]; shortDescription: string; description: string;
   images: string[]; videoUrl: string; virtualTourUrl: string;
   contactName: string; contactPhone: string; contactWhatsApp: string;
+  badge?: '' | 'Hot deal' | 'New' | 'Price reduced';
   isDemo: boolean; createdAt: string; updatedAt: string; views: number;
 }
 export type InquiryStatus = 'New'|'Contacted'|'Follow-up'|'Closed';

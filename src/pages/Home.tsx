@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Building2, KeyRound, Landmark, ShieldCheck, Handshake, MapPinned } from 'lucide-react';
 import { useApp } from '../context/AppContext';
@@ -6,6 +6,7 @@ import { getProperties } from '../services/storageService';
 import PropertyGrid from '../components/PropertyGrid';
 import WhatsAppButton from '../components/WhatsAppButton';
 import CallButton from '../components/CallButton';
+import PropImg from '../components/PropImg';
 import { PROPERTY_TYPES } from '../data/options';
 import { useSeo } from '../hooks/useSeo';
 import type { Property } from '../types';
@@ -20,11 +21,18 @@ export default function Home() {
   const nav = useNavigate();
   const [q, setQ] = useState({ purpose: 'Sale', type: '', location: '', min: '', max: '', beds: '' });
   const all = getProperties();
+  const withImg = all.filter(p => p.images[0]);
+  const slides = (withImg.some(p => p.featured) ? withImg.filter(p => p.featured) : withImg).slice(0, 5).map(p => p.images[0]);
+  const n = slides.length;
+  const [idx, setIdx] = useState(0);
+  useEffect(() => { if (n < 2) return; const t = setInterval(() => setIdx(i => (i + 1) % n), 6000); return () => clearInterval(t); }, [n]);
   const submit = (e: FormEvent) => { e.preventDefault(); const p = new URLSearchParams(); Object.entries(q).forEach(([k, v]) => v && p.set(k, v)); nav(`/properties?${p}`); };
   const up = (k: keyof typeof q) => (e: { target: { value: string } }) => setQ(x => ({ ...x, [k]: e.target.value }));
   return (
     <>
-      <section className="hero"><div className="container">
+      <section className={`hero${n ? ' has-slides' : ''}`}>
+        {n > 0 && <><div className="hslides" aria-hidden="true">{slides.map((src, i) => <div key={src} className={`hslide${i === idx % n ? ' on' : ''}`}><PropImg src={src} alt="" label="" eager={i === 0} cover /></div>)}</div><div className="hshade" /></>}
+        <div className="container">
         <h1>{s.heroHeading}</h1><p>{s.heroDescription}</p>
         <div className="row"><Link className="btn brass" to="/properties">View Properties</Link><Link className="btn light" to="/contact">Contact Us</Link></div>
         <form className="card searchbar" onSubmit={submit} aria-label="Property search">
@@ -35,7 +43,9 @@ export default function Home() {
           <label className="field"><span>Max price</span><input type="number" min="0" value={q.max} onChange={up('max')} /></label>
           <label className="field"><span>Bedrooms</span><select value={q.beds} onChange={up('beds')}><option value="">Any</option>{[1, 2, 3, 4, 5].map(n => <option key={n} value={n}>{n}+</option>)}</select></label>
           <button className="btn primary" type="submit">Search</button></form>
-      </div></section>
+      </div>
+        {n > 1 && <div className="hdots">{slides.map((src, i) => <button key={src} type="button" className={i === idx % n ? 'on' : ''} onClick={() => setIdx(i)} aria-label={`Show featured photo ${i + 1}`} />)}</div>}
+      </section>
       <Row title="Featured properties" to="/properties?sort=featured" items={all.filter(p => p.featured)} />
       <Row title="Properties for sale" to="/sale" items={all.filter(p => p.transactionType === 'Sale')} />
       <Row title="Properties for rent" to="/rent" items={all.filter(p => p.transactionType === 'Rent')} />

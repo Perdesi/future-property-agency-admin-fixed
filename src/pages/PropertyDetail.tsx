@@ -16,7 +16,11 @@ export default function PropertyDetail() {
   const { id = '' } = useParams();
   const { settings: s, notify } = useApp();
   const p = useMemo(() => getProperty(id), [id]);
-  useSeo(p?.title ?? 'Property not found', p?.shortDescription);
+  useSeo(p ? `${p.title} in ${p.area}, ${p.city}` : 'Property not found', p ? (p.shortDescription || p.description).slice(0, 158) : undefined, p?.images[0]);
+  useJsonLd('crumbs', p ? { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://futurepropertyagency.com/' },
+    { '@type': 'ListItem', position: 2, name: 'Properties', item: 'https://futurepropertyagency.com/properties' },
+    { '@type': 'ListItem', position: 3, name: p.title, item: `https://futurepropertyagency.com/property/${p.id}` }] } : null);
   useJsonLd('property', p ? {
     '@context': 'https://schema.org', '@type': 'RealEstateListing', name: p.title, url: `https://futurepropertyagency.com/property/${p.id}`,
     description: p.shortDescription || p.description, datePosted: p.createdAt, image: p.images.slice(0, 5),
