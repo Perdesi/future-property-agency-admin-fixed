@@ -6,6 +6,7 @@ const env = (import.meta as unknown as { env: Record<string, string | undefined>
 const URL_BASE = (env.VITE_SUPABASE_URL ?? '').replace(/\/+$/, '');
 const ANON = env.VITE_SUPABASE_ANON_KEY ?? '';
 export const REMOTE = Boolean(URL_BASE && ANON);
+export const IS_PROD = Boolean(env.PROD);
 export const BUCKET = 'property-images';
 
 interface Session { access_token: string; refresh_token: string; expires_at: number; email: string }
@@ -83,7 +84,8 @@ async function request(path: string, init: RequestInit & { timeoutMs?: number } 
     const r = await fetch(`${URL_BASE}${path}`, { ...init, headers, signal: ctrl.signal });
     if (!r.ok) {
       const text = await r.text().catch(() => '');
-      if (r.status === 401 || r.status === 403) throw new Error('Not allowed. Please log in again.');
+      if (r.status === 401) { if (loadSession()) saveSession(null); throw new Error('Your login expired. Please log in again.'); }
+      if (r.status === 403) throw new Error('You are not allowed to do this.');
       throw new Error(`Server error ${r.status}${text ? `: ${text.slice(0, 140)}` : ''}`);
     }
     return r;

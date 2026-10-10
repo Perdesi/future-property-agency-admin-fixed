@@ -9,6 +9,7 @@ import * as remote from './remote';
 
 /** True when Supabase env vars are configured: data lives in the online database, localStorage is only a cache. */
 export const REMOTE = remote.REMOTE;
+export const IS_PROD = remote.IS_PROD;
 export const uploadImage = remote.uploadImage;
 export const setRemoteErrorHandler = remote.setRemoteErrorHandler;
 const bg = (label: string, p: Promise<unknown>): void => { p.catch(e => remote.reportError(`${label}: ${e instanceof Error ? e.message : 'failed'}`)); };
@@ -184,8 +185,10 @@ export function validateBackup(data: unknown): data is BackupFile {
 }
 export async function restoreBackup(b: BackupFile): Promise<void> {
   if (REMOTE) {
-    if (b.properties.length) await remote.upsertRow('properties', b.properties.map(propRow));
-    if (b.inquiries.length) await remote.upsertRow('inquiries', b.inquiries.map(inqRow));
+    const props = b.properties.filter(p => p && typeof p.id === 'string' && p.id.length <= 60 && typeof p.title === 'string').slice(0, 2000);
+    const inqs = b.inquiries.filter(i => i && typeof i.id === 'string' && i.id.length <= 60 && typeof i.name === 'string').slice(0, 5000);
+    if (props.length) await remote.upsertRow('properties', props.map(propRow));
+    if (inqs.length) await remote.upsertRow('inquiries', inqs.map(inqRow));
     await remote.upsertRow('settings', { id: 'main', data: { ...defaultSettings, ...b.settings } });
     await syncFromRemote();
     return;

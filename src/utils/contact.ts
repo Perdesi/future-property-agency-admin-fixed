@@ -20,3 +20,14 @@ export const formatPrice = (price: number, unit: string): string => {
     : price >= 100_000 ? `${+(price / 100_000).toFixed(2)} Lakh` : price.toLocaleString('en-PK');
   return `${unit.startsWith('PKR') ? 'PKR' : ''} ${v}${unit.includes('/') ? ' ' + unit.slice(unit.indexOf('/')) : ''}`.trim();
 };
+
+/** Accepts "facebook.com/page" or a full link and always returns a working https:// link. */
+export const socialUrl = (u: string): string => (/^https?:\/\//i.test(u.trim()) ? u.trim() : `https://${u.trim().replace(/^\/+/, '')}`);
+export const socialLinks = (s: Settings): { name: string; url: string }[] =>
+  ([['Facebook', s.facebook], ['Instagram', s.instagram], ['YouTube', s.youtube], ['TikTok', s.tiktok]] as const)
+    .filter(x => x[1] && x[1].trim()).map(x => ({ name: x[0], url: socialUrl(x[1]) }));
+
+/** Only allows normal web links (blocks "javascript:" and similar). Returns undefined for anything else. */
+export const safeUrl = (u?: string): string | undefined => {
+  try { const x = new URL((u ?? '').trim()); return x.protocol === 'http:' || x.protocol === 'https:' ? x.href : undefined; } catch { return undefined; }
+};

@@ -3,7 +3,8 @@ import { Link, useParams } from 'react-router-dom';
 import { MapPin, Printer, Share2 } from 'lucide-react';
 import { getProperties, getProperty, trackPropertyView } from '../services/storageService';
 import { useApp } from '../context/AppContext';
-import { formatPrice } from '../utils/contact';
+import { formatPrice, safeUrl } from '../utils/contact';
+import { videoEmbed } from '../utils/video';
 import PropertyGallery from '../components/PropertyGallery';
 import InquiryForm from '../components/InquiryForm';
 import FavoriteButton from '../components/FavoriteButton';
@@ -27,6 +28,11 @@ export default function PropertyDetail() {
     address: { '@type': 'PostalAddress', streetAddress: p.address, addressLocality: p.city, addressCountry: 'PK' },
     offers: { '@type': 'Offer', price: p.price, priceCurrency: 'PKR', availability: p.status === 'Available' ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut' },
   } : null);
+  const vid = p?.videoUrl ? videoEmbed(p.videoUrl) : null;
+  useJsonLd('video', p && vid?.youtubeId ? {
+    '@context': 'https://schema.org', '@type': 'VideoObject', name: p.title, description: (p.shortDescription || p.description || p.title).slice(0, 200),
+    thumbnailUrl: [`https://i.ytimg.com/vi/${vid.youtubeId}/hqdefault.jpg`], uploadDate: p.updatedAt || p.createdAt, embedUrl: vid.src, contentUrl: p.videoUrl,
+  } : null);
   useEffect(() => { if (p) trackPropertyView(p.id); }, [p?.id]); // eslint-disable-line
   if (!p) return <div className="container"><EmptyState title="Property not found" text="This listing may have been removed." action={<Link className="btn primary" to="/properties">Browse properties</Link>} /></div>;
   const similar = getProperties().filter(x => x.id !== p.id && (x.propertyType === p.propertyType || x.area === p.area)).slice(0, 3);
@@ -44,8 +50,9 @@ export default function PropertyDetail() {
           <dl className="facts-grid">{facts.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
           <h2>Description</h2><p>{p.description}</p>
           {p.features.length > 0 && <><h2>Features</h2><ul className="chips">{p.features.map(f => <li key={f}>{f}</li>)}</ul></>}
-          <p className="row">{p.videoUrl && <a className="btn ghost" href={p.videoUrl} target="_blank" rel="noopener noreferrer">Watch video</a>}{p.virtualTourUrl && <a className="btn ghost" href={p.virtualTourUrl} target="_blank" rel="noopener noreferrer">Virtual tour</a>}
-            <a className="btn ghost" target="_blank" rel="noopener noreferrer" href={p.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.address)}`}>View on map</a></p></div></div>
+          {vid && <><h2>Video</h2><div className={`vplayer${vid.vertical ? ' vertical' : ''}`}><iframe src={vid.src} title={`Video of ${p.title}`} loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture; fullscreen" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" /></div></>}
+          <p className="row">{safeUrl(p.videoUrl) && !vid?.youtubeId && <a className="btn ghost" href={safeUrl(p.videoUrl)} target="_blank" rel="noopener noreferrer">Watch video</a>}{safeUrl(p.virtualTourUrl) && <a className="btn ghost" href={safeUrl(p.virtualTourUrl)} target="_blank" rel="noopener noreferrer">Virtual tour</a>}
+            <a className="btn ghost" target="_blank" rel="noopener noreferrer" href={safeUrl(p.mapUrl) || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.address)}`}>View on map</a></p></div></div>
       <aside><div className="card pad"><h3>Contact {p.contactName || s.agencyName}</h3><p className="muted small">{s.ceo}</p><div className="row"><WhatsAppButton kind="property" property={p} /><CallButton number={p.contactPhone} className="btn primary" /></div></div>
         <InquiryForm property={p} /></aside>
       {similar.length > 0 && <section className="wide"><h2>Similar properties</h2><PropertyGrid items={similar} /></section>}

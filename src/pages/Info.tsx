@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { safeUrl, socialLinks } from '../utils/contact';
 import { Home, Key, Building, Store, TrendingUp, Megaphone, Search, Handshake, MapPin, Phone, Mail } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useSeo } from '../hooks/useSeo';
@@ -34,8 +35,8 @@ export function Contact() {
   const { settings: s } = useApp();
   useSeo('Contact', `Contact ${s.agencyName}`);
   return <div className="container section"><h1>Contact us</h1><div className="detail"><div className="card pad"><h3>{s.agencyName}</h3>
-    <p><MapPin size={14} /> {s.address}</p><p><Phone size={14} /> {s.phone}<br />{s.mobile} (WhatsApp)</p>{s.email && <p><Mail size={14} /> <a href={`mailto:${s.email}`}>{s.email}</a></p>}<p>{s.ceo}</p><p className="muted">{s.officeHours}</p>
-    <div className="row"><CallButton className="btn primary" label="Call now" /><WhatsAppButton /><a className="btn ghost" target="_blank" rel="noopener noreferrer" href={s.mapUrl}>Get directions</a></div></div>
+    <p><MapPin size={14} /> {s.address}</p><p><Phone size={14} /> {s.phone}<br />{s.mobile} (WhatsApp)</p>{s.email && <p><Mail size={14} /> <a href={`mailto:${s.email}`}>{s.email}</a></p>}{socialLinks(s).length > 0 && <p>Follow us: {socialLinks(s).map(l => <a key={l.name} href={l.url} target="_blank" rel="noopener noreferrer">{l.name} </a>)}</p>}<p>{s.ceo}</p><p className="muted">{s.officeHours}</p>
+    <div className="row"><CallButton className="btn primary" label="Call now" /><WhatsAppButton /><a className="btn ghost" target="_blank" rel="noopener noreferrer" href={safeUrl(s.mapUrl)}>Get directions</a></div></div>
     <InquiryForm withSubject /></div></div>;
 }
 export function Privacy() {

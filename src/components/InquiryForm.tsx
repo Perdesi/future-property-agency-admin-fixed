@@ -9,8 +9,10 @@ export default function InquiryForm({ property, withSubject }: { property?: Prop
   const [err, setErr] = useState<Record<string, string>>({});
   const set = (k: keyof typeof blank) => (e: { target: { value: string } }) => setF(s => ({ ...s, [k]: e.target.value }));
   const [sending, setSending] = useState(false);
+  const [hp, setHp] = useState('');
   async function submit(e: FormEvent) {
     e.preventDefault();
+    if (hp) { notify('Inquiry sent. We will contact you soon.'); setF(blank); return; }
     const er: Record<string, string> = {};
     if (f.name.trim().length < 2) er.name = 'Enter your name.';
     if (!/^[+\d][\d\s-]{8,15}$/.test(f.phone.trim())) er.phone = 'Enter a valid phone number.';
@@ -30,6 +32,7 @@ export default function InquiryForm({ property, withSubject }: { property?: Prop
     <label className="field"><span>{label}</span><input type={type} value={f[k]} onChange={set(k)} aria-invalid={!!err[k]} />{err[k] && <em className="err">{err[k]}</em>}</label>);
   return (
     <form className="card pad form" onSubmit={submit} noValidate>
+      <input type="text" name="website" value={hp} onChange={e => setHp(e.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }} />
       <h3>{property ? 'Ask about this property' : 'Send us a message'}</h3>
       {property && <p className="muted small">{property.id} · {property.title}</p>}
       {L('name', 'Name')}{L('phone', 'Phone', 'tel')}{L('email', 'Email (optional)', 'email')}{withSubject && L('subject', 'Subject')}
