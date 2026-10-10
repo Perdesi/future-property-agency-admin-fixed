@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { safeUrl, socialLinks } from '../utils/contact';
+import { phoneList, safeUrl, telLink } from '../utils/contact';
+import SocialButtons from '../components/SocialButtons';
 import { Home, Key, Building, Store, TrendingUp, Megaphone, Search, Handshake, MapPin, Phone, Mail } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useSeo } from '../hooks/useSeo';
@@ -20,7 +21,7 @@ export function About() {
   return <div className="container section prose"><h1>About {s.agencyName}</h1><p className="urdu">{s.tagline}</p>
     <p>{s.agencyName} is a property agency in Gunjmandi, Rawalpindi, helping people buy, sell and rent residential and commercial property, and think through investment options.</p>
     <h2>What we do</h2><p>We assist with buying and selling, rentals, commercial property, residential property and investment guidance, with clear communication at each step.</p>
-    <h2>Leadership</h2><p>{s.ceo}</p><h2>Visit us</h2><p><MapPin size={14} /> {s.address}<br /><Phone size={14} /> {s.phone} · {s.mobile}</p><div className="row"><CallButton className="btn primary" /><WhatsAppButton /></div></div>;
+    <h2>Leadership</h2><p>{s.ceo}</p><h2>Visit us</h2><p><MapPin size={14} /> {s.address}<br /><Phone size={14} /> {phoneList(s).join(' · ')}</p><div className="row"><CallButton className="btn primary" /><WhatsAppButton /></div></div>;
 }
 export function Investment() {
   useSeo('Investment', 'Property investment guidance in Rawalpindi.');
@@ -35,7 +36,7 @@ export function Contact() {
   const { settings: s } = useApp();
   useSeo('Contact', `Contact ${s.agencyName}`);
   return <div className="container section"><h1>Contact us</h1><div className="detail"><div className="card pad"><h3>{s.agencyName}</h3>
-    <p><MapPin size={14} /> {s.address}</p><p><Phone size={14} /> {s.phone}<br />{s.mobile} (WhatsApp)</p>{s.email && <p><Mail size={14} /> <a href={`mailto:${s.email}`}>{s.email}</a></p>}{socialLinks(s).length > 0 && <p>Follow us: {socialLinks(s).map(l => <a key={l.name} href={l.url} target="_blank" rel="noopener noreferrer">{l.name} </a>)}</p>}<p>{s.ceo}</p><p className="muted">{s.officeHours}</p>
+    <p><MapPin size={14} /> {s.address}</p><p><Phone size={14} /> {phoneList(s).map((n, i) => <span key={n}>{i > 0 && <br />}<a href={telLink(n)}>{n}</a></span>)}</p>{s.email && <p><Mail size={14} /> <a href={`mailto:${s.email}`}>{s.email}</a></p>}<div className="follow"><strong>Follow us</strong><SocialButtons s={s} /></div><p>{s.ceo}</p><p className="muted">{s.officeHours}</p>
     <div className="row"><CallButton className="btn primary" label="Call now" /><WhatsAppButton /><a className="btn ghost" target="_blank" rel="noopener noreferrer" href={safeUrl(s.mapUrl)}>Get directions</a></div></div>
     <InquiryForm withSubject /></div></div>;
 }

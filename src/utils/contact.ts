@@ -31,3 +31,6 @@ export const socialLinks = (s: Settings): { name: string; url: string }[] =>
 export const safeUrl = (u?: string): string | undefined => {
   try { const x = new URL((u ?? '').trim()); return x.protocol === 'http:' || x.protocol === 'https:' ? x.href : undefined; } catch { return undefined; }
 };
+
+/** The phone numbers that are actually filled in, without repeats. */
+export const phoneList = (s: Settings): string[] => Array.from(new Set([s.phone, s.mobile].map(x => (x ?? '').trim()).filter(Boolean)));
