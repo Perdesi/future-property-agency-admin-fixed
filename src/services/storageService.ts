@@ -55,6 +55,8 @@ function migrate(_from: number): void { /* add per-version schema migrations her
 
 // Properties
 export const getProperties = (): Property[] => read<Property[]>(KEYS.properties, [], isArr);
+/** What visitors may see: properties marked Unavailable are hidden (they stay in the admin panel). */
+export const getPublicProperties = (): Property[] => getProperties().filter(p => p.status !== 'Unavailable');
 export const getProperty = (idOrSlug: string): Property | undefined =>
   getProperties().find(p => p.id === idOrSlug || p.slug === idOrSlug);
 export function nextPropertyId(): string {

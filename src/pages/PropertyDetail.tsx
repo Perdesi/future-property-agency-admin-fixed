@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { MapPin, Printer, Share2 } from 'lucide-react';
-import { getProperties, getProperty, trackPropertyView } from '../services/storageService';
+import { getProperty, getPublicProperties, isLoggedIn, trackPropertyView } from '../services/storageService';
 import { useApp } from '../context/AppContext';
 import { formatPrice, safeUrl } from '../utils/contact';
 import { videoEmbed } from '../utils/video';
@@ -12,7 +12,7 @@ import WhatsAppButton from '../components/WhatsAppButton';
 import CallButton from '../components/CallButton';
 import PropertyGrid from '../components/PropertyGrid';
 import EmptyState from '../components/EmptyState';
-import { useJsonLd, useSeo } from '../hooks/useSeo';
+import { useJsonLd, useNoIndex, useSeo } from '../hooks/useSeo';
 export default function PropertyDetail() {
   const { id = '' } = useParams();
   const { settings: s, notify } = useApp();
@@ -33,9 +33,12 @@ export default function PropertyDetail() {
     '@context': 'https://schema.org', '@type': 'VideoObject', name: p.title, description: (p.shortDescription || p.description || p.title).slice(0, 200),
     thumbnailUrl: [`https://i.ytimg.com/vi/${vid.youtubeId}/hqdefault.jpg`], uploadDate: p.updatedAt || p.createdAt, embedUrl: vid.src, contentUrl: p.videoUrl,
   } : null);
-  useEffect(() => { if (p) trackPropertyView(p.id); }, [p?.id]); // eslint-disable-line
+  useNoIndex(p?.status === 'Unavailable');
+  useEffect(() => { if (p && p.status !== 'Unavailable') trackPropertyView(p.id); }, [p?.id]); // eslint-disable-line
   if (!p) return <div className="container"><EmptyState title="Property not found" text="This listing may have been removed." action={<Link className="btn primary" to="/properties">Browse properties</Link>} /></div>;
-  const similar = getProperties().filter(x => x.id !== p.id && (x.propertyType === p.propertyType || x.area === p.area)).slice(0, 3);
+  const hidden = p.status === 'Unavailable';
+  if (hidden && !isLoggedIn()) return <div className="container"><EmptyState title="This property is no longer available" text="Please browse our other properties, or contact us and we will help you find a match." action={<Link className="btn primary" to="/properties">Browse properties</Link>} /></div>;
+  const similar = getPublicProperties().filter(x => x.id !== p.id && (x.propertyType === p.propertyType || x.area === p.area)).slice(0, 3);
   const share = async () => {
     const url = window.location.href;
     try { if (navigator.share) await navigator.share({ title: p.title, url }); else { await navigator.clipboard.writeText(url); notify('Link copied'); } } catch { /* cancelled */ }
@@ -45,6 +48,7 @@ export default function PropertyDetail() {
     <div className="container detail">
       <div><PropertyGallery p={p} />
         <div className="card pad"><div className="row between"><div><h1>{p.title}</h1><div className="muted"><MapPin size={14} /> {p.address}</div></div><div className="price big">{formatPrice(p.price, p.priceUnit)}</div></div>
+          {hidden && <p className="notice">Hidden from visitors (status is Unavailable). Only you can see this page. Change the status to Available to show it on the website.</p>}
           {p.isDemo && <p className="notice">SAMPLE / DEMO listing — not a real available property.</p>}
           <div className="row"><FavoriteButton id={p.id} /><button className="btn ghost" onClick={share}><Share2 size={16} />Share</button><button className="btn ghost" onClick={() => window.print()}><Printer size={16} />Print</button></div>
           <dl className="facts-grid">{facts.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>

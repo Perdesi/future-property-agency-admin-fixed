@@ -1,7 +1,7 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import { useMemo } from 'react';
 import { LayoutGrid, List } from 'lucide-react';
-import { getProperties } from '../services/storageService';
+import { getPublicProperties } from '../services/storageService';
 import { applyFilters, type Filters } from '../utils/filter';
 import PropertyFilters from '../components/PropertyFilters';
 import PropertyGrid from '../components/PropertyGrid';
@@ -13,7 +13,7 @@ export default function Listing({ title, intro, base }: { title: string; intro: 
   useSeo(title, intro);
   const [sp, setSp] = useSearchParams();
   const f: Filters = Object.fromEntries(sp.entries());
-  const all = useMemo(() => getProperties().filter(base ?? (() => true)), [base]);
+  const all = useMemo(() => getPublicProperties().filter(base ?? (() => true)), [base]);
   const items = applyFilters(all, f);
   const change = (k: string, v: string) => setSp(prev => { const n = new URLSearchParams(prev); v ? n.set(k, v) : n.delete(k); return n; }, { replace: true });
   const list = f.view === 'list';

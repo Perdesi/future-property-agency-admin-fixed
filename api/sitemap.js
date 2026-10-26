@@ -9,8 +9,8 @@ export default async function handler(req, res) {
   let rows = [];
   if (base && key) {
     try {
-      const r = await fetch(`${base}/rest/v1/properties?select=id,updated_at,images:data->images&order=created_at.desc&limit=5000`, { headers: { apikey: key, Authorization: `Bearer ${key}` } });
-      if (r.ok) rows = await r.json();
+      const r = await fetch(`${base}/rest/v1/properties?select=id,updated_at,images:data->images,status:data->>status&order=created_at.desc&limit=5000`, { headers: { apikey: key, Authorization: `Bearer ${key}` } });
+      if (r.ok) rows = (await r.json()).filter(x => x.status !== 'Unavailable');
     } catch { /* fall back to main pages only */ }
   }
   const today = new Date().toISOString().slice(0, 10);

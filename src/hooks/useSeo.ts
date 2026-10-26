@@ -34,11 +34,12 @@ export function useJsonLd(id: string, data: object | null): void {
   }, [id, json]);
 }
 /** Keeps a page out of search results (used for the admin panel). */
-export function useNoIndex(): void {
+export function useNoIndex(enabled: boolean = true): void {
   useEffect(() => {
+    if (!enabled) return;
     const el = document.createElement('meta');
     el.name = 'robots'; el.content = 'noindex, nofollow';
     document.head.appendChild(el);
     return () => { el.remove(); };
-  }, []);
+  }, [enabled]);
 }

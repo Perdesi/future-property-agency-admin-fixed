@@ -2,7 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Building2, KeyRound, Landmark, ShieldCheck, Handshake, MapPinned } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { getProperties } from '../services/storageService';
+import { getPublicProperties } from '../services/storageService';
 import PropertyGrid from '../components/PropertyGrid';
 import WhatsAppButton from '../components/WhatsAppButton';
 import CallButton from '../components/CallButton';
@@ -20,7 +20,7 @@ export default function Home() {
   const { settings: s } = useApp();
   const nav = useNavigate();
   const [q, setQ] = useState({ purpose: 'Sale', type: '', location: '', min: '', max: '', beds: '' });
-  const all = getProperties();
+  const all = getPublicProperties();
   const withImg = all.filter(p => p.images[0]);
   const slides = (withImg.some(p => p.featured) ? withImg.filter(p => p.featured) : withImg).slice(0, 5).map(p => p.images[0]);
   const n = slides.length;

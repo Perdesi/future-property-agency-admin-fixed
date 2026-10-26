@@ -8,7 +8,7 @@ import WhatsAppButton from '../components/WhatsAppButton';
 import CallButton from '../components/CallButton';
 import InquiryForm from '../components/InquiryForm';
 import PropertyGrid from '../components/PropertyGrid';
-import { getProperties } from '../services/storageService';
+import { getPublicProperties } from '../services/storageService';
 
 const SERVICES = [[Handshake, 'Property Buying', 'Help finding, checking and buying the right property.'], [Home, 'Property Selling', 'Listing, promotion and buyer coordination for your property.'], [Key, 'Property Rental', 'Rental listings and tenant matching for homes and shops.'], [Store, 'Commercial Property', 'Shops, offices, plazas, plots and buildings.'], [Building, 'Residential Property', 'Houses, flats and residential plots.'], [TrendingUp, 'Property Investment Guidance', 'Guidance based on location, budget and objectives.'], [Megaphone, 'Property Marketing', 'Wider visibility for your listing.'], [Search, 'Property Search Assistance', 'Tell us what you need; we search on your behalf.']] as const;
 export function Services() {
@@ -25,7 +25,7 @@ export function About() {
 }
 export function Investment() {
   useSeo('Investment', 'Property investment guidance in Rawalpindi.');
-  const items = getProperties().filter(p => p.features.includes('Rental Income') || p.category !== 'Residential').slice(0, 6);
+  const items = getPublicProperties().filter(p => p.features.includes('Rental Income') || p.category !== 'Residential').slice(0, 6);
   return <><section className="pagehead"><div className="container"><h1>Invest in Property with Confidence</h1>
     <p className="muted">We help clients identify property opportunities based on location, budget and investment objectives. Property values and rental income can rise or fall, and we do not guarantee profit or returns.</p></div></section>
     <div className="container section"><div className="pgrid">{[['Commercial investment', 'Shops, offices and buildings in busy commercial areas.'], ['Rental investment', 'Properties that can be let out for regular rent.'], ['Plot investment', 'Residential and commercial plots, with document checks.'], ['Buying guidance', 'Budget, location and paperwork explained before you commit.']].map(([t, d]) => <div className="card pad" key={t}><h3>{t}</h3><p className="muted">{d}</p></div>)}</div>
