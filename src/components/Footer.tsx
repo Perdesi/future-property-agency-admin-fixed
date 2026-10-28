@@ -10,7 +10,7 @@ export default function Footer() {
   return (
     <footer className="site-footer"><div className="container fgrid">
       <div><h3>{s.agencyName}</h3><p className="urdu">{s.tagline}</p><p className="small">{s.ceo}</p></div>
-      <div><h4>Quick links</h4><ul>{[['/properties', 'Properties'], ['/sale', 'For Sale'], ['/rent', 'For Rent'], ['/commercial', 'Commercial'], ['/investment', 'Investment'], ['/services', 'Services'], ['/about', 'About'], ['/contact', 'Contact']].map(([t, l]) => <li key={t}><Link to={t}>{l}</Link></li>)}</ul></div>
+      <div><h4>Quick links</h4><ul>{[['/properties', 'Properties'], ['/sale', 'For Sale'], ['/rent', 'For Rent'], ['/commercial', 'Commercial'], ['/residential', 'Residential'], ['/guides', 'Guides'], ['/investment', 'Investment'], ['/services', 'Services'], ['/about', 'About'], ['/contact', 'Contact']].map(([t, l]) => <li key={t}><Link to={t}>{l}</Link></li>)}</ul></div>
       <div><h4>Contact</h4><p>{phoneList(s).map(n => <span key={n}><a href={telLink(n)}>{n}</a><br /></span>)}{s.email && <a href={`mailto:${s.email}`}>{s.email}</a>}</p><p>{s.address}</p><p className="small">{s.officeHours}</p>
         <SocialButtons s={s} /></div>
     </div><div className="container small copy">© {s.agencyName}. All rights reserved. · <Link to="/privacy">Privacy Policy</Link> · <Link to="/admin">Admin</Link></div></footer>

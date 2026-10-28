@@ -1,6 +1,6 @@
 // Vercel serverless function: serves /sitemap.xml (see vercel.json). Lists main pages + every property in the database.
 const SITE = 'https://futurepropertyagency.com';
-const PAGES = ['/', '/properties', '/sale', '/rent', '/commercial', '/residential', '/investment', '/services', '/about', '/contact', '/privacy'];
+const PAGES = ['/', '/properties', '/sale', '/rent', '/commercial', '/residential', '/investment', '/services', '/about', '/contact', '/guides', '/guides/buying-property-rawalpindi-checklist', '/guides/documents-needed-to-rent-property', '/guides/property-registry-requirements', '/guides/fbr-filer-vs-non-filer-property-rules', '/guides/avoid-property-fraud-pakistan', '/privacy'];
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 export default async function handler(req, res) {

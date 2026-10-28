@@ -7,6 +7,7 @@ import Listing from './pages/Listing';
 import PropertyDetail from './pages/PropertyDetail';
 import Favorites from './pages/Favorites';
 import { About, Contact, Investment, NotFound, Privacy, Services } from './pages/Info';
+import { GuideDetail, GuidesIndex } from './pages/Guides';
 import type { Property } from './types';
 import AdminLayout from './admin/AdminLayout';
 import RequireAdmin from './admin/RequireAdmin';
@@ -54,6 +55,8 @@ export default function App() {
             <Route path="services" element={<Services />} />
             <Route path="about" element={<About />} />
             <Route path="contact" element={<Contact />} />
+            <Route path="guides" element={<GuidesIndex />} />
+            <Route path="guides/:slug" element={<GuideDetail />} />
             <Route path="privacy" element={<Privacy />} />
             <Route path="favorites" element={<Favorites />} />
             <Route path="*" element={<NotFound />} />
