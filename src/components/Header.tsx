@@ -4,7 +4,7 @@ import { Heart, Menu, Moon, Sun, X } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import WhatsAppButton from './WhatsAppButton';
 import CallButton from './CallButton';
-const NAV: [string, string][] = [['/', 'Home'], ['/properties', 'Properties'], ['/sale', 'For Sale'], ['/rent', 'For Rent'], ['/commercial', 'Commercial'], ['/residential', 'Residential'], ['/investment', 'Investment'], ['/services', 'Services'], ['/about', 'About'], ['/contact', 'Contact']];
+const NAV: [string, string][] = [['/', 'Home'], ['/properties', 'Properties'], ['/sale', 'For Sale'], ['/rent', 'For Rent'], ['/commercial', 'Commercial'], ['/residential', 'Residential'], ['/guides', 'Guides'], ['/investment', 'Investment'], ['/services', 'Services'], ['/about', 'About'], ['/contact', 'Contact']];
 export default function Header() {
   const { settings, favorites, theme, toggleTheme } = useApp();
   const [open, setOpen] = useState(false);
